@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>client</title>
+    <style>        
+        textarea {
+            border: 1px solid black;
+            width: 365px;
+            height: 280px;
+            font-size: 18px;
+            font-family: Georgia;
+        }
+        #box_btn {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: 370px;
+        }
+        #box_textView {
+            border: 1px solid black;
+            width: 370px;
+            height: 280px;
+            font-size: 18px;
+            font-family: Georgia;
+            background-color: white;
+        }
+        input {
+            text-align: center;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            width: 170px;
+            border: solid black 1px;
+            border-radius: 3px;
+            font-size: 18px;
+        }
+        input[type='submit'] {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        form {
+            width: 370px;
+        }
+        #box_loading {
+            width: 370px;
+            margin-top: 5px;
+        }
+        #loadingImg {
+            margin-left: 165px;
+        }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script>
+        $(function() {
+            var socket = io(); 
+
+            //1. submit버튼 누르면 server에 데이터 송신
+            $('form').submit(function(e) {
+                e.preventDefault(); //prevents page reloading
+                $('#box_textView').text(''); //이전 결과 지우기  
+                
+                socket.emit('submit', $('#id_textarea').val());
+                $('#box_loading').html("<img id='loadingImg' src='https://user-images.githubusercontent.com/48707043/84183480-efb3b580-aac6-11ea-8ad0-c79fe54f1111.gif' alt='loading img'>");
+            });
+
+            //2. server에게서 데이터 수신
+            socket.on('short',function(data) {
+                $('#box_textView').append('<span>' + data + '.</span>');
+                $('#box_textView > span').css('color','blue');
+            });
+            socket.on('long',function(data) {
+                $('#box_textView').append(data + '.');
+            });
+
+            //결과 나오면 로딩이미지 삭제
+            socket.on('end', function() {
+                $('#box_loading').html('');
+            });
+            
+            //reset버튼 누르면 초기화
+            $('#id_reset').click(function() {
+                $('#box_textView').text('');
+            });
+        });
+    </script>
+</head>
+<body>
+    <form action=''>
+        <div id='box_textarea'>
+            <textarea id='id_textarea' rows='30' cols='50' placeholder='검토할 글을 입력하세요.'></textarea>
+        </div>
+        <div id='box_btn'>
+            <input type='submit' value='검토하기'>
+            <input id='id_reset' type='reset' value='전체 지우기'>
+        </div>
+        <div id='box_textView'></div>
+    </form>
+    <div id='box_loading'></div>
+</body>
+</html>

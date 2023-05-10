@@ -1,0 +1,8 @@
+
+
+gensim 다운로드는 그냥 cmd창에서
+pip install gensim하면 word2vec랑 doc2vec를 import 할 수 있게 돼 
+
+
+용량 큰 애가 word2vec 학습한 데이터야 W2V.*파일 전부다 꼭 있어야해
+Test.py에 실행 예시 하나 넣어놨어
